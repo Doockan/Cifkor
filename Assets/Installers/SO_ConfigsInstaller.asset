@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13f39f0413e678144bae40357bbf106c, type: 3}
+  m_Name: SO_ConfigsInstaller
+  m_EditorClassIdentifier: 
+  CurrencyConfig: {fileID: 11400000, guid: a6f69466b1d3ad54399fc6142e58a988, type: 2}
+  EnergyConfig: {fileID: 11400000, guid: 1b77c0d4d97068e49b635774426a71b9, type: 2}
