@@ -1,20 +1,15 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
     public class ClickerView : MonoBehaviour
     {
-      [SerializeField] private Button _tapButton;
+        [SerializeField] private UIDocument _uIDocument;
 
-      public Button TapButton => _tapButton;
-
-      public void SetCurrency(int amount)
-      {
-      }
-
-      public void SetEnergy(int energy)
-      {
-      }
+        private VisualElement Root => _uIDocument.rootVisualElement;
+        public Button ClickerButton => Root.Q<Button>("ClickerButton");
+        public Label CurrencyLabel => Root.Q<Label>("CurrencyLabel");
+        public Label EnergyLabel => Root.Q<Label>("EnergyLabel");
     }
 }

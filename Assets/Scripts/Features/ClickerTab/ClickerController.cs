@@ -1,78 +1,99 @@
 using Zenject;
 using UnityEngine;
-using Assets.Scripts.Models;
 using Assets.Scripts.ScriptableObjects;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
   public class ClickerController : IInitializable, ITickable
   {
-    private readonly CurrencyModel _currency;
-    private readonly EnergyModel _energy;
     private readonly ClickerView _view;
     private readonly CurrencyConfigSO _currencyConfig;
     private readonly EnergyConfigSO _energyConfig;
-    private float _autoCollectTimer;
-    private float _energyRestoreTimer;
 
-    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig)
+    private int _currency = 0;
+    private int _energy;
+    private float _autoCollectTimer = 0f;
+    private float _energyRestoreTimer = 0f;
+
+    public ClickerController(
+      ClickerView view,
+      CurrencyConfigSO currencyConfig,
+      EnergyConfigSO energyConfig)
     {
       _view = view;
       _currencyConfig = currencyConfig;
       _energyConfig = energyConfig;
-      _currency = new CurrencyModel();
-      _energy = new EnergyModel(_energyConfig.MaxEnergy);
     }
 
     public void Initialize()
     {
-      _view.TapButton.onClick.AddListener(HandleClick);
-      UpdateUI();
+      _energy = _energyConfig.MaxEnergy;
+      _view.CurrencyLabel.text = $"Валюта: {_currency}";
+      _view.EnergyLabel.text = $"Энергия: {_energy}";
+      _view.ClickerButton.clicked += OnClick;
+
+      // Доп. VFX/Audio (заглушки) можно добавить здесь
     }
 
     public void Tick()
     {
-      _autoCollectTimer += Time.deltaTime;
-      _energyRestoreTimer += Time.deltaTime;
-
+      // Автосбор валюты
+      _autoCollectTimer += Time.unscaledDeltaTime;
       if (_autoCollectTimer >= _currencyConfig.AutoCollectInterval)
       {
         TryAutoCollect();
-        _autoCollectTimer = 0;
+        _autoCollectTimer = 0f;
       }
 
+      // Восстановление энергии
+      _energyRestoreTimer += Time.unscaledDeltaTime;
       if (_energyRestoreTimer >= _energyConfig.RestoreInterval)
       {
-        _energy.Add(_energyConfig.RestoreAmount);
-        _energyRestoreTimer = 0;
-        UpdateUI();
+        RestoreEnergy();
+        _energyRestoreTimer = 0f;
       }
     }
 
-    private void HandleClick()
+    void OnClick()
     {
-      if (_energy.TrySpend(1))
+      if (_energy > 0)
       {
-        _currency.Add(_currencyConfig.ClickReward);
-        // VFX, SFX, анимации
+        _currency += _currencyConfig.ClickReward;
+        _energy -= 1;
         UpdateUI();
+        // VFX/Audio (например, PlayClickVFX())
       }
-    }
-
-    private void TryAutoCollect()
-    {
-      if (_energy.TrySpend(1))
+      else
       {
-        _currency.Add(_currencyConfig.AutoCollectReward);
-        // VFX, SFX, анимации
+        // Можно показать сообщение "Нет энергии"
+      }
+    }
+
+    void TryAutoCollect()
+    {
+      if (_energy > 0)
+      {
+        _currency += _currencyConfig.AutoCollectReward;
+        _energy -= 1;
+        UpdateUI();
+        // VFX/Audio (например, PlayAutoCollectVFX())
+      }
+    }
+
+    void RestoreEnergy()
+    {
+      int newEnergy = Mathf.Min(_energy + _energyConfig.RestoreAmount, _energyConfig.MaxEnergy);
+      if (newEnergy != _energy)
+      {
+        _energy = newEnergy;
         UpdateUI();
       }
     }
 
-    private void UpdateUI()
+    void UpdateUI()
     {
-      _view.SetCurrency(_currency.Amount);
-      _view.SetEnergy(_energy.Energy);
+      _view.CurrencyLabel.text = $"Валюта: {_currency}";
+      _view.EnergyLabel.text = $"Энергия: {_energy}";
     }
   }
 }
