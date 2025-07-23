@@ -1,10 +1,12 @@
+using System;
 using Zenject;
 using UnityEngine;
 using Assets.Scripts.ScriptableObjects;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
-  public class ClickerController : IInitializable, ITickable
+  public class ClickerController : IInitializable, IDisposable, ITickable
   {
     private readonly ClickerView _view;
     private readonly CurrencyConfigSO _currencyConfig;
@@ -15,10 +17,7 @@ namespace Assets.Scripts.Features.ClickerTab
     private float _autoCollectTimer = 0f;
     private float _energyRestoreTimer = 0f;
 
-    public ClickerController(
-      ClickerView view,
-      CurrencyConfigSO currencyConfig,
-      EnergyConfigSO energyConfig)
+    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig)
     {
       _view = view;
       _currencyConfig = currencyConfig;
@@ -35,9 +34,13 @@ namespace Assets.Scripts.Features.ClickerTab
       // Доп. VFX/Audio (заглушки) можно добавить здесь
     }
 
+    public void Dispose()
+    {
+      _view.ClickerButton.clicked -= OnClick;
+    }
+
     public void Tick()
     {
-      // Автосбор валюты
       _autoCollectTimer += Time.unscaledDeltaTime;
       if (_autoCollectTimer >= _currencyConfig.AutoCollectInterval)
       {
@@ -45,7 +48,6 @@ namespace Assets.Scripts.Features.ClickerTab
         _autoCollectTimer = 0f;
       }
 
-      // Восстановление энергии
       _energyRestoreTimer += Time.unscaledDeltaTime;
       if (_energyRestoreTimer >= _energyConfig.RestoreInterval)
       {
@@ -54,7 +56,19 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    void OnClick()
+    public void OnTabActivated(bool active)
+    {
+      if (active)
+      {
+        _view.Root.style.display = DisplayStyle.Flex;
+      }
+      else
+      {
+        _view.Root.style.display = DisplayStyle.None;
+      }
+    }
+
+    private void OnClick()
     {
       if (_energy > 0)
       {
@@ -69,7 +83,7 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    void TryAutoCollect()
+    private void TryAutoCollect()
     {
       if (_energy > 0)
       {
@@ -80,7 +94,7 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    void RestoreEnergy()
+    private void RestoreEnergy()
     {
       int newEnergy = Mathf.Min(_energy + _energyConfig.RestoreAmount, _energyConfig.MaxEnergy);
       if (newEnergy != _energy)
@@ -90,7 +104,7 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    void UpdateUI()
+    private void UpdateUI()
     {
       _view.CurrencyLabel.text = $"Валюта: {_currency}";
       _view.EnergyLabel.text = $"Энергия: {_energy}";

@@ -49,6 +49,7 @@ namespace Assets.Scripts.Core.RequestQueue
         if (r != request)
           newQueue.Enqueue(r);
       }
+
       _queue = newQueue;
     }
 
@@ -74,5 +75,4 @@ namespace Assets.Scripts.Core.RequestQueue
       ProcessNext();
     }
   }
-
 }

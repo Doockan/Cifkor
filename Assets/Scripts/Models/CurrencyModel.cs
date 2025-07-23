@@ -4,7 +4,10 @@ namespace Assets.Scripts.Models
   {
     public int Amount { get; private set; }
 
-    public void Add(int value) { Amount += value; }
+    public void Add(int value)
+    {
+      Amount += value;
+    }
 
     public bool TrySpend(int value)
     {
@@ -17,5 +20,4 @@ namespace Assets.Scripts.Models
       return false;
     }
   }
-
 }

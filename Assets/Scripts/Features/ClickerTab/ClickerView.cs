@@ -7,7 +7,7 @@ namespace Assets.Scripts.Features.ClickerTab
     {
         [SerializeField] private UIDocument _uIDocument;
 
-        private VisualElement Root => _uIDocument.rootVisualElement;
+        public VisualElement Root => _uIDocument.rootVisualElement.Q<VisualElement>("ClickerTab");
         public Button ClickerButton => Root.Q<Button>("ClickerButton");
         public Label CurrencyLabel => Root.Q<Label>("CurrencyLabel");
         public Label EnergyLabel => Root.Q<Label>("EnergyLabel");
