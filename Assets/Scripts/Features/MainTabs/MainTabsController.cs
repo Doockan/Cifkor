@@ -1,27 +1,16 @@
+using UniRx;
 using Zenject;
-using Assets.Scripts.Features.ClickerTab;
-using Assets.Scripts.Features.DogFactsTab;
-using Assets.Scripts.Features.WeatherTab;
 
 namespace Assets.Scripts.Features.MainTabs
 {
     public class MainTabsController : IInitializable
     {
         private readonly MainTabsView _mainTabsView;
-        private readonly ClickerController _clickerController;
-        private readonly WeatherController _weatherController;
-        private readonly DogFactsController _dogFactsController;
+        public readonly Subject<ETabType> OnTabChangeAction = new Subject<ETabType>();
 
-        public MainTabsController(
-            MainTabsView mainTabsView,
-            ClickerController clickerController,
-            WeatherController weatherController,
-            DogFactsController dogFactsController)
+        public MainTabsController(MainTabsView mainTabsView)
         {
             _mainTabsView = mainTabsView;
-            _clickerController = clickerController;
-            _weatherController = weatherController;
-            _dogFactsController = dogFactsController;
         }
 
         public void Initialize()
@@ -35,10 +24,7 @@ namespace Assets.Scripts.Features.MainTabs
 
         private void SwitchTab(ETabType tab)
         {
-            _clickerController.OnTabActivated(tab == ETabType.Clicker);
-            _weatherController.OnTabActivated(tab == ETabType.Weather);
-            _dogFactsController.OnTabActivated(tab == ETabType.Dog);
-
+            OnTabChangeAction.OnNext(tab);
             SelectButton(tab);
         }
 

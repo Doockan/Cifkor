@@ -1,78 +1,85 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Core.RequestQueue
 {
-  public interface IRequest
+  public class RequestQueue : IRequestQueue, IDisposable
   {
-    Task ExecuteAsync(Action<object> onComplete, Action onCancel);
-  }
-
-  public interface IRequestQueue
-  {
-    void Enqueue(IRequest request);
-    void CancelRequest(IRequest request);
-    void RemoveRequest(IRequest request);
-  }
-
-  public class RequestQueue : IRequestQueue
-  {
-    private Queue<IRequest> _queue = new Queue<IRequest>();
+    // Храним очереди и токены отмены по типу запроса
+    private readonly Queue<RequestItem> _queue = new Queue<RequestItem>();
     private bool _isProcessing = false;
-    private IRequest _currentRequest;
+    private RequestItem _currentRequest;
 
-    public void Enqueue(IRequest request)
+    private class RequestItem
     {
-      _queue.Enqueue(request);
-      ProcessNext();
+      public Func<CancellationToken, UniTask> RequestFunc;
+      public Type RequestType;
+      public CancellationToken CancellationToken;
     }
 
-    public void CancelRequest(IRequest request)
+    public void Enqueue(Func<CancellationToken, UniTask> requestFunc, Type requestType,
+      CancellationToken cancellationToken)
     {
-      if (_currentRequest == request)
+      _queue.Enqueue(new RequestItem
       {
-        // Cancel current request logic
-      }
-      else
-      {
-        RemoveRequest(request);
-      }
+        RequestFunc = requestFunc,
+        RequestType = requestType,
+        CancellationToken = cancellationToken
+      });
+      ProcessNext().Forget();
     }
 
-    public void RemoveRequest(IRequest request)
+    public void RemoveRequestsOfType<T>()
     {
-      var newQueue = new Queue<IRequest>();
+      var type = typeof(T);
+      var newQueue = new Queue<RequestItem>();
       while (_queue.Count > 0)
       {
-        var r = _queue.Dequeue();
-        if (r != request)
-          newQueue.Enqueue(r);
+        var item = _queue.Dequeue();
+        if (item.RequestType != type)
+          newQueue.Enqueue(item);
       }
 
-      _queue = newQueue;
+      _queue.Clear();
+      foreach (var item in newQueue)
+        _queue.Enqueue(item);
     }
 
-    private async void ProcessNext()
+    public void Dispose()
+    {
+      _queue.Clear();
+      _isProcessing = false;
+      _currentRequest = null;
+    }
+
+    private async UniTaskVoid ProcessNext()
     {
       if (_isProcessing || _queue.Count == 0) return;
+
       _isProcessing = true;
       _currentRequest = _queue.Dequeue();
-      await _currentRequest.ExecuteAsync(OnRequestComplete, OnRequestCancel);
-    }
 
-    private void OnRequestComplete(object result)
-    {
+      try
+      {
+        await _currentRequest.RequestFunc(_currentRequest.CancellationToken);
+      }
+      catch (OperationCanceledException)
+      {
+        Debug.Log("Request canceled");
+      }
+      catch (Exception e)
+      {
+        Debug.LogError($"RequestQueue error: {e.Message}");
+      }
+
       _isProcessing = false;
       _currentRequest = null;
-      ProcessNext();
-    }
-
-    private void OnRequestCancel()
-    {
-      _isProcessing = false;
-      _currentRequest = null;
-      ProcessNext();
+      Debug.Log("NEXT request");
+      if (_queue.Count > 0)
+        ProcessNext().Forget();
     }
   }
 }

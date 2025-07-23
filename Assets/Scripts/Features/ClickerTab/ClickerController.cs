@@ -1,8 +1,10 @@
+using UniRx;
 using System;
 using Zenject;
 using UnityEngine;
-using Assets.Scripts.ScriptableObjects;
 using UnityEngine.UIElements;
+using Assets.Scripts.Features.MainTabs;
+using Assets.Scripts.ScriptableObjects;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
@@ -11,21 +13,26 @@ namespace Assets.Scripts.Features.ClickerTab
     private readonly ClickerView _view;
     private readonly CurrencyConfigSO _currencyConfig;
     private readonly EnergyConfigSO _energyConfig;
+    private readonly MainTabsController _mainTabsController;
+    private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
     private int _currency = 0;
     private int _energy;
     private float _autoCollectTimer = 0f;
     private float _energyRestoreTimer = 0f;
 
-    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig)
+    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig,
+      MainTabsController mainTabsController)
     {
       _view = view;
       _currencyConfig = currencyConfig;
       _energyConfig = energyConfig;
+      _mainTabsController = mainTabsController;
     }
 
     public void Initialize()
     {
+      _mainTabsController.OnTabChangeAction.Subscribe(OnTabActivated).AddTo(_disposables);
       _energy = _energyConfig.MaxEnergy;
       _view.CurrencyLabel.text = $"Валюта: {_currency}";
       _view.EnergyLabel.text = $"Энергия: {_energy}";
@@ -36,6 +43,7 @@ namespace Assets.Scripts.Features.ClickerTab
 
     public void Dispose()
     {
+      _disposables.Dispose();
       _view.ClickerButton.clicked -= OnClick;
     }
 
@@ -56,9 +64,9 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    public void OnTabActivated(bool active)
+    private void OnTabActivated(ETabType type)
     {
-      if (active)
+      if (type == ETabType.Clicker)
       {
         _view.Root.style.display = DisplayStyle.Flex;
       }
