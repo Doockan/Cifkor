@@ -1,12 +1,18 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns="UnityEngine.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/MainWindow.uss?fileID=7433441132597879392&amp;guid=7e052f00fea95624091fadb515021453&amp;type=3#MainWindow" />
     <ui:VisualElement class="main-container">
         <ui:VisualElement name="TabsContainer" class="tabs-container">
             <ui:VisualElement name="ClickerTab" class="tab clicker-tab">
                 <ui:Label text="Кликер" class="tab-title" />
-                <ui:Button name="ClickerButton" text="Кликнуть" class="clicker-button" />
-                <ui:Label name="CurrencyLabel" text="Валюта: 0" class="currency-label" />
-                <ui:Label name="EnergyLabel" text="Энергия: 1000" class="energy-label" />
+                <ui:VisualElement name="TopBar" class="clicker-topbar">
+                    <ui:Label name="CurrencyLabel" text="Валюта: 0" class="currency-label" />
+                    <ui:Label name="EnergyLabel" text="Энергия: 1000" class="energy-label" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ButtonContainer" class="clicker-button-container">
+                    <ui:Button name="ClickerButton" class="clicker-button">
+                        <ui:VisualElement name="ClickerVfxContainer" class="clicker-vfx-container" />
+                    </ui:Button>
+                </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="WeatherTab" class="tab weather-tab" style="display: none;">
                 <ui:Label text="Погода" class="tab-title" />
