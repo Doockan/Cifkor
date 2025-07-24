@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Assets.Scripts.Features.MainTabs;
 using Assets.Scripts.ScriptableObjects;
+using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
@@ -20,6 +21,7 @@ namespace Assets.Scripts.Features.ClickerTab
     private int _energy;
     private float _autoCollectTimer = 0f;
     private float _energyRestoreTimer = 0f;
+    private Button _clickerButton;
 
     public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig,
       MainTabsController mainTabsController)
@@ -36,13 +38,15 @@ namespace Assets.Scripts.Features.ClickerTab
       _energy = _energyConfig.MaxEnergy;
       _view.CurrencyLabel.text = $"Валюта: {_currency}";
       _view.EnergyLabel.text = $"Энергия: {_energy}";
-      _view.ClickerButton.clicked += OnClick;
+      _clickerButton = _view.ClickerButton;
+      _clickerButton.clicked += OnClick;
     }
 
     public void Dispose()
     {
       _disposables.Dispose();
-      _view.ClickerButton.clicked -= OnClick;
+      if (_clickerButton != null)
+        _clickerButton.clicked -= OnClick;
     }
 
     public void Tick()
@@ -103,6 +107,7 @@ namespace Assets.Scripts.Features.ClickerTab
     private void PlayVfx()
     {
       _view.PlayCurrencyFlyVfx();
+      _view.PlayParticleVfx(Random.Range(50, 100));
     }
 
     private void RestoreEnergy()
