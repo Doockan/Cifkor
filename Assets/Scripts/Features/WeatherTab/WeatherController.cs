@@ -2,6 +2,7 @@ using UniRx;
 using System;
 using UnityEngine.UIElements;
 using System.Threading;
+using Assets.Scripts.API;
 using Assets.Scripts.Core.RequestQueue;
 using Assets.Scripts.Core.Utils.WeatherHandle;
 using Assets.Scripts.Features.MainTabs;
@@ -62,8 +63,10 @@ namespace Assets.Scripts.Features.WeatherTab
             Debug.Log("UPDATE weather data");
             _requestQueue.Enqueue(async (token) =>
             {
-                var forecast = await _weatherApiService.GetForecastAsync(token);
-                _view.SetWeather(forecast);
+                var model = await _weatherApiService.GetForecastAsync(token);
+                var iconTexture = await _weatherApiService.GetWeatherIconAsync(model.IconUrl, ct);
+
+                _view.SetWeather(model, iconTexture);
             }, typeof(WeatherForecastDataModel), ct);
         }
     }

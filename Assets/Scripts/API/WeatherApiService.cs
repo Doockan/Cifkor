@@ -1,8 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Networking;
+using Assets.Scripts.Core.Utils.WeatherHandle;
 
-namespace Assets.Scripts.Core.Utils.WeatherHandle
+namespace Assets.Scripts.API
 {
     public class WeatherApiService : IWeatherApiService
     {
@@ -25,11 +27,7 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
                     await Task.Yield();
                 }
 
-#if UNITY_2022_1_OR_NEWER
-                if (request.result != UnityWebRequest.Result.Success)
-#else
-            if (request.isNetworkError || request.isHttpError)
-#endif
+                if (request.isNetworkError || request.isHttpError)
                 {
                     throw new System.Exception($"Weather request error: {request.error}");
                 }
@@ -37,6 +35,35 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
                 // Преобразование JSON в модель
                 var json = request.downloadHandler.text;
                 return WeatherForecastDataModel.FromJson(json);
+            }
+        }
+
+        public async Task<Texture2D> GetWeatherIconAsync(string url, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(url)) return null;
+
+            using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
+            {
+                var operation = request.SendWebRequest();
+
+                while (!operation.isDone)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        request.Abort();
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
+                    await Task.Yield();
+                }
+
+                if (request.isNetworkError || request.isHttpError)
+                {
+                    Debug.LogWarning($"Weather icon request error: {request.error}");
+                    return null;
+                }
+
+                return DownloadHandlerTexture.GetContent(request);
             }
         }
     }
