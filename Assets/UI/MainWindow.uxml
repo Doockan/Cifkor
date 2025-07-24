@@ -8,10 +8,9 @@
                     <ui:Label name="CurrencyLabel" text="Валюта: 0" class="currency-label" />
                     <ui:Label name="EnergyLabel" text="Энергия: 1000" class="energy-label" />
                 </ui:VisualElement>
-                <ui:VisualElement name="ButtonContainer" class="clicker-button-container">
-                    <ui:Button name="ClickerButton" class="clicker-button">
-                        <ui:VisualElement name="ClickerVfxContainer" class="clicker-vfx-container" />
-                    </ui:Button>
+                <ui:VisualElement name="ButtonContainer" class="clicker-button-container" style="align-items: center; justify-content: flex-start;">
+                    <ui:VisualElement name="ClickerVfxContainer" class="clicker-vfx-container" style="width: 100%; height: 40%;" />
+                    <ui:Button name="ClickerButton" class="clicker-button" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="WeatherTab" class="tab weather-tab" style="display: none;">

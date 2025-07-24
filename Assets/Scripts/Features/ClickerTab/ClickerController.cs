@@ -37,8 +37,6 @@ namespace Assets.Scripts.Features.ClickerTab
       _view.CurrencyLabel.text = $"Валюта: {_currency}";
       _view.EnergyLabel.text = $"Энергия: {_energy}";
       _view.ClickerButton.clicked += OnClick;
-
-      // Доп. VFX/Audio (заглушки) можно добавить здесь
     }
 
     public void Dispose()
@@ -83,7 +81,7 @@ namespace Assets.Scripts.Features.ClickerTab
         _currency += _currencyConfig.ClickReward;
         _energy -= 1;
         UpdateUI();
-        // VFX/Audio (например, PlayClickVFX())
+        PlayVfx();
       }
       else
       {
@@ -98,8 +96,13 @@ namespace Assets.Scripts.Features.ClickerTab
         _currency += _currencyConfig.AutoCollectReward;
         _energy -= 1;
         UpdateUI();
-        // VFX/Audio (например, PlayAutoCollectVFX())
+        PlayVfx();
       }
+    }
+
+    private void PlayVfx()
+    {
+      _view.PlayCurrencyFlyVfx();
     }
 
     private void RestoreEnergy()
