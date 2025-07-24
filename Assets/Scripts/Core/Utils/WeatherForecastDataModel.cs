@@ -3,13 +3,12 @@ using UnityEngine;
 namespace Assets.Scripts.Core.Utils.WeatherHandle
 {
     [System.Serializable]
-    public class WeatherForecastModel
+    public class WeatherForecastDataModel
     {
         public string Temperature;
         public string IconUrl;
         public string ShortForecast;
 
-        // Класс для парсинга ответа API
         [System.Serializable]
         private class Root
         {
@@ -30,7 +29,7 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
             public string shortForecast;
         }
 
-        public static WeatherForecastModel FromJson(string json)
+        public static WeatherForecastDataModel FromJson(string json)
         {
             var root = JsonUtility.FromJson<Root>(json);
             var firstPeriod = root?.properties?.periods != null && root.properties.periods.Length > 0
@@ -40,7 +39,7 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
             if (firstPeriod == null)
                 return null;
 
-            return new WeatherForecastModel
+            return new WeatherForecastDataModel
             {
                 Temperature = firstPeriod.temperature + "F",
                 IconUrl = firstPeriod.icon,

@@ -72,7 +72,7 @@ namespace Assets.Scripts.Features.WeatherTab
         {
             _cts?.Cancel();
             _cts?.Dispose();
-            _requestQueue.RemoveRequestsOfType<WeatherForecastModel>();
+            _requestQueue.RemoveRequestsOfType<WeatherForecastDataModel>();
             _weatherSubscription?.Dispose();
         }
 
@@ -83,7 +83,7 @@ namespace Assets.Scripts.Features.WeatherTab
             {
                 var forecast = await _weatherApiService.GetForecastAsync(token);
                 _view.SetWeather(forecast);
-            }, typeof(WeatherForecastModel), ct);
+            }, typeof(WeatherForecastDataModel), ct);
         }
     }
 }

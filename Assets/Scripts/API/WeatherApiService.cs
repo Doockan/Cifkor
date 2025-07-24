@@ -8,7 +8,7 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
     {
         private const string ApiUrl = "https://api.weather.gov/gridpoints/TOP/32,81/forecast";
 
-        public async Task<WeatherForecastModel> GetForecastAsync(CancellationToken cancellationToken)
+        public async Task<WeatherForecastDataModel> GetForecastAsync(CancellationToken cancellationToken)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(ApiUrl))
             {
@@ -36,7 +36,7 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
 
                 // Преобразование JSON в модель
                 var json = request.downloadHandler.text;
-                return WeatherForecastModel.FromJson(json);
+                return WeatherForecastDataModel.FromJson(json);
             }
         }
     }

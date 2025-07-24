@@ -5,6 +5,6 @@ namespace Assets.Scripts.Core.Utils.WeatherHandle
 {
     public interface IWeatherApiService
     {
-        Task<WeatherForecastModel> GetForecastAsync(CancellationToken cancellationToken);
+        Task<WeatherForecastDataModel> GetForecastAsync(CancellationToken cancellationToken);
     }
 }
