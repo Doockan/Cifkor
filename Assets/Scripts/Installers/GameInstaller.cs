@@ -6,6 +6,7 @@ using Assets.Scripts.Features.ClickerTab;
 using Assets.Scripts.Features.DogFactsTab;
 using Assets.Scripts.Features.MainTabs;
 using Assets.Scripts.Features.WeatherTab;
+using Assets.Scripts.API;
 
 namespace Assets.Scripts.Installers
 {
@@ -25,9 +26,8 @@ namespace Assets.Scripts.Installers
       ControllersBind();
       ViewsBind();
 
-      // Сервисы API
       Container.Bind<IWeatherApiService>().To<WeatherApiService>().AsSingle();
-      // Container.Bind<IDogApiService>().To<DogApiService>().AsSingle();
+      Container.Bind<IDogApiService>().To<DogApiService>().AsSingle();
 
       // ObjectPool (например, для попапов, VFX)
       // Container.BindFactory<PopupView, PopupView.Factory>().FromComponentInNewPrefabResource("PopupView");

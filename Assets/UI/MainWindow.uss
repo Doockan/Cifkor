@@ -98,6 +98,8 @@
     font-size: 17px;
     margin-bottom: 10px;
     text-align: center;
+    white-space: normal;
+    word-break: break-word;
 }
 .dog-fact-close {
     width: 90px;
