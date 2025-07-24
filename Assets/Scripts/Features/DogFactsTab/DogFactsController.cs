@@ -1,69 +1,39 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 using UniRx;
-using Zenject;
 using Assets.Scripts.API;
 using Assets.Scripts.Core.Utils;
 using Assets.Scripts.Core.RequestQueue;
 using Assets.Scripts.Features.MainTabs;
-using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Assets.Scripts.Features.DogFactsTab
 {
-    public class DogFactsController : IInitializable, IDisposable
+    public class DogFactsController : ITabController, IDisposable
     {
         private readonly IDogApiService _dogApiService;
         private readonly IRequestQueue _requestQueue;
         private readonly DogFactsView _view;
-        private readonly MainTabsController _mainTabsController;
         private CancellationTokenSource _cts;
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private IDisposable _breedClickSubscription;
 
+        public ETabType TabType => ETabType.Dog;
+
         public DogFactsController(IDogApiService dogApiService, IRequestQueue requestQueue,
-            DogFactsView dogFactsView, MainTabsController mainTabsController)
+            DogFactsView dogFactsView)
         {
             _dogApiService = dogApiService;
             _requestQueue = requestQueue;
             _view = dogFactsView;
-            _mainTabsController = mainTabsController;
-        }
-
-        public void Initialize()
-        {
-            _mainTabsController.OnTabChangeAction
-                .Subscribe(OnTabActive)
-                .AddTo(_disposables);
         }
 
         public void Dispose()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
             _breedClickSubscription?.Dispose();
-            _disposables.Dispose();
         }
 
-        private void OnTabActive(ETabType type)
+        public void ActivateTab()
         {
-            if (type == ETabType.Dog)
-            {
-                _view.Root.style.display = UnityEngine.UIElements.DisplayStyle.Flex;
-                ActivateTab();
-            }
-            else
-            {
-                _view.Root.style.display = UnityEngine.UIElements.DisplayStyle.None;
-                DeactivateTab();
-            }
-        }
-
-        private void ActivateTab()
-        {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            _view.Root.style.display = UnityEngine.UIElements.DisplayStyle.Flex;
             _cts = new CancellationTokenSource();
 
             _view.ShowLoader(true);
@@ -82,8 +52,9 @@ namespace Assets.Scripts.Features.DogFactsTab
             }, typeof(DogBreedDataModel), _cts.Token);
         }
 
-        private void DeactivateTab()
+        public void DeactivateTab()
         {
+            _view.Root.style.display = UnityEngine.UIElements.DisplayStyle.None;
             _cts?.Cancel();
             _cts?.Dispose();
             _requestQueue.RemoveRequestsOfType<DogBreedDataModel>();
@@ -105,8 +76,6 @@ namespace Assets.Scripts.Features.DogFactsTab
             {
                 var breedModel = await _dogApiService.GetBreedAsync(breedId, ct);
                 _view.ShowFactLoader(false);
-
-                Debug.Log($"{breedModel.Data.Attributes.Name}");
 
                 if (breedModel.Data != null)
                 {

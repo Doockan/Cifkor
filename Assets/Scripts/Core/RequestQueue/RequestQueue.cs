@@ -77,7 +77,6 @@ namespace Assets.Scripts.Core.RequestQueue
 
       _isProcessing = false;
       _currentRequest = null;
-      Debug.Log("NEXT request");
       if (_queue.Count > 0)
         ProcessNext().Forget();
     }

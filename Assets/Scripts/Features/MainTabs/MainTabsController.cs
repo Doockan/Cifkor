@@ -1,16 +1,20 @@
-using UniRx;
 using Zenject;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Features.MainTabs
 {
     public class MainTabsController : IInitializable
     {
         private readonly MainTabsView _mainTabsView;
-        public readonly Subject<ETabType> OnTabChangeAction = new Subject<ETabType>();
+        private readonly Dictionary<ETabType, ITabController> _tabControllers;
 
-        public MainTabsController(MainTabsView mainTabsView)
+        private ETabType _currentActiveTab;
+
+        public MainTabsController(MainTabsView mainTabsView, List<ITabController> tabControllers)
         {
             _mainTabsView = mainTabsView;
+            _tabControllers = tabControllers.ToDictionary(c => c.TabType);
         }
 
         public void Initialize()
@@ -24,7 +28,20 @@ namespace Assets.Scripts.Features.MainTabs
 
         private void SwitchTab(ETabType tab)
         {
-            OnTabChangeAction.OnNext(tab);
+            if (_currentActiveTab == tab)
+                return;
+
+            if (_tabControllers.TryGetValue(_currentActiveTab, out var prevController))
+            {
+                prevController.DeactivateTab();
+            }
+
+            if (_tabControllers.TryGetValue(tab, out var newController))
+            {
+                newController.ActivateTab();
+            }
+
+            _currentActiveTab = tab;
             SelectButton(tab);
         }
 

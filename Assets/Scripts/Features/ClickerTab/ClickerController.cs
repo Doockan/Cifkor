@@ -1,4 +1,3 @@
-using UniRx;
 using System;
 using Zenject;
 using UnityEngine;
@@ -9,13 +8,11 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
-  public class ClickerController : IInitializable, IDisposable, ITickable
+  public class ClickerController : ITabController, IInitializable, IDisposable, ITickable
   {
     private readonly ClickerView _view;
     private readonly CurrencyConfigSO _currencyConfig;
     private readonly EnergyConfigSO _energyConfig;
-    private readonly MainTabsController _mainTabsController;
-    private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
     private int _currency = 0;
     private int _energy;
@@ -23,18 +20,17 @@ namespace Assets.Scripts.Features.ClickerTab
     private float _energyRestoreTimer = 0f;
     private Button _clickerButton;
 
-    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig,
-      MainTabsController mainTabsController)
+    public ETabType TabType => ETabType.Clicker;
+
+    public ClickerController(ClickerView view, CurrencyConfigSO currencyConfig, EnergyConfigSO energyConfig)
     {
       _view = view;
       _currencyConfig = currencyConfig;
       _energyConfig = energyConfig;
-      _mainTabsController = mainTabsController;
     }
 
     public void Initialize()
     {
-      _mainTabsController.OnTabChangeAction.Subscribe(OnTabActivated).AddTo(_disposables);
       _energy = _energyConfig.MaxEnergy;
       _view.CurrencyLabel.text = $"Валюта: {_currency}";
       _view.EnergyLabel.text = $"Энергия: {_energy}";
@@ -44,7 +40,6 @@ namespace Assets.Scripts.Features.ClickerTab
 
     public void Dispose()
     {
-      _disposables.Dispose();
       if (_clickerButton != null)
         _clickerButton.clicked -= OnClick;
     }
@@ -66,17 +61,17 @@ namespace Assets.Scripts.Features.ClickerTab
       }
     }
 
-    private void OnTabActivated(ETabType type)
+
+    public void ActivateTab()
     {
-      if (type == ETabType.Clicker)
-      {
-        _view.Root.style.display = DisplayStyle.Flex;
-      }
-      else
-      {
-        _view.Root.style.display = DisplayStyle.None;
-      }
+      _view.Root.style.display = DisplayStyle.Flex;
     }
+
+    public void DeactivateTab()
+    {
+      _view.Root.style.display = DisplayStyle.None;
+    }
+
 
     private void OnClick()
     {
