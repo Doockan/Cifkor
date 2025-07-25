@@ -1,6 +1,6 @@
+using UniRx;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UniRx;
 using System;
 using System.Collections.Generic;
 using Assets.Scripts.Core.Utils;

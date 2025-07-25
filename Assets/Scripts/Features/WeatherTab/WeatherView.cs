@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using Assets.Scripts.Core.Utils.WeatherHandle;
+using Assets.Scripts.Core.Utils;
 
 namespace Assets.Scripts.Features.WeatherTab
 {

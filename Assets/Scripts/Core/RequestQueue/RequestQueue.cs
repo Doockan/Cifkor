@@ -1,8 +1,8 @@
+using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Core.RequestQueue
 {

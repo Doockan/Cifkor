@@ -2,9 +2,9 @@ using System;
 using Zenject;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 using Assets.Scripts.Features.MainTabs;
 using Assets.Scripts.ScriptableObjects;
-using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Features.ClickerTab
 {
@@ -14,10 +14,10 @@ namespace Assets.Scripts.Features.ClickerTab
     private readonly CurrencyConfigSO _currencyConfig;
     private readonly EnergyConfigSO _energyConfig;
 
-    private int _currency = 0;
+    private int _currency;
     private int _energy;
-    private float _autoCollectTimer = 0f;
-    private float _energyRestoreTimer = 0f;
+    private float _autoCollectTimer;
+    private float _energyRestoreTimer;
     private Button _clickerButton;
 
     public ETabType TabType => ETabType.Clicker;

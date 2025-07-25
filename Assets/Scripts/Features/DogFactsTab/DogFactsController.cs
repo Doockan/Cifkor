@@ -1,7 +1,6 @@
+using UniRx;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
-using UniRx;
 using Assets.Scripts.API;
 using Assets.Scripts.Core.Utils;
 using Assets.Scripts.Core.RequestQueue;

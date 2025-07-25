@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Scripts.Core.Utils.WeatherHandle
+namespace Assets.Scripts.Core.Utils
 {
     [System.Serializable]
     public class WeatherForecastDataModel
