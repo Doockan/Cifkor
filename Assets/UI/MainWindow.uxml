@@ -2,13 +2,13 @@
     <Style src="project://database/Assets/UI/MainWindow.uss?fileID=7433441132597879392&amp;guid=7e052f00fea95624091fadb515021453&amp;type=3#MainWindow" />
     <ui:VisualElement class="main-container">
         <ui:VisualElement name="TabsContainer" class="tabs-container">
-            <ui:VisualElement name="ClickerTab" class="tab clicker-tab">
+            <ui:VisualElement name="ClickerTab" class="tab clicker-tab" style="display: flex;">
                 <ui:Label text="Кликер" class="tab-title" />
                 <ui:VisualElement name="TopBar" class="clicker-topbar">
                     <ui:Label name="CurrencyLabel" text="Валюта: 0" class="currency-label" />
                     <ui:Label name="EnergyLabel" text="Энергия: 1000" class="energy-label" />
                 </ui:VisualElement>
-                <ui:VisualElement name="ButtonContainer" class="clicker-button-container" style="align-items: center; justify-content: flex-start;">
+                <ui:VisualElement name="ButtonContainer" class="clicker-button-container">
                     <ui:VisualElement name="ClickerVfxContainer" class="clicker-vfx-container" />
                     <ui:Button name="ClickerButton" class="clicker-button" />
                 </ui:VisualElement>
@@ -22,6 +22,9 @@
             </ui:VisualElement>
             <ui:VisualElement name="DogTab" class="tab dog-tab" style="display: none;">
                 <ui:Label text="Породы и факты" class="tab-title" />
+                <ui:VisualElement name="Loader" class="dog-loader" style="display: none;">
+                    <ui:VisualElement name="Spiner" class="spinner" style="display: flex;" />
+                </ui:VisualElement>
                 <ui:ListView name="DogBreedsList" class="dog-breeds-list" />
                 <ui:VisualElement name="DogFactPopup" class="dog-fact-popup" style="display: none;">
                     <ui:Label name="DogFactTitle" class="dog-fact-title" />

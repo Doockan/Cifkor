@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 268267666}
   - component: {fileID: 268267665}
   - component: {fileID: 268267667}
+  - component: {fileID: 268267668}
   m_Layer: 0
   m_Name: UIRoot
   m_TagString: Untagged
@@ -226,6 +227,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiDocument: {fileID: 268267662}
+--- !u!114 &268267668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268267661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbba3e2c177f1714da0f12153d93a525, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &663132568
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,6 @@ using UniRx;
 using System;
 using System.Collections.Generic;
 using Assets.Scripts.Core.Utils;
-using static Assets.Scripts.Core.Utils.DogBreedDataModel;
 
 namespace Assets.Scripts.Features.DogFactsTab
 {
@@ -18,24 +17,21 @@ namespace Assets.Scripts.Features.DogFactsTab
         public Label FactTitle => FactPopup.Q<Label>("DogFactTitle");
         public Label FactDescription => FactPopup.Q<Label>("DogFactDescription");
         public Button FactCloseButton => FactPopup.Q<Button>("DogFactCloseButton");
-        public VisualElement Loader => Root.Q<VisualElement>("Loader"); // если есть отдельный loader
-        public VisualElement FactLoader => FactPopup.Q<VisualElement>("FactLoader"); // если есть
-
+        public VisualElement Loader => Root.Q<VisualElement>("Loader");
         private Subject<string> _breedClicked = new Subject<string>();
         public IObservable<string> OnBreedClicked => _breedClicked;
 
         private List<BreedData> _breeds;
 
+        public void Awake()
+        {
+            FactCloseButton.clicked += HideBreedFactPopup;
+        }
+
         public void ShowLoader(bool show)
         {
             if (Loader != null)
                 Loader.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-
-        public void ShowFactLoader(bool show)
-        {
-            if (FactLoader != null)
-                FactLoader.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void HideBreedFactPopup()
@@ -64,6 +60,13 @@ namespace Assets.Scripts.Features.DogFactsTab
             DogBreedsList.onSelectionChange += OnBreedSelected;
         }
 
+        public void ClearBreedsList()
+        {
+            _breeds = null;
+            DogBreedsList.itemsSource = null;
+            DogBreedsList.RefreshItems();
+        }
+
         private void OnBreedSelected(IEnumerable<object> selected)
         {
             foreach (var sel in selected)
@@ -75,11 +78,6 @@ namespace Assets.Scripts.Features.DogFactsTab
             }
 
             DogBreedsList.ClearSelection();
-        }
-
-        private void Awake()
-        {
-            FactCloseButton.clicked += HideBreedFactPopup;
         }
     }
 }
